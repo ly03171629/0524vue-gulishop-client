@@ -1,10 +1,13 @@
 <template>
   <div>
-    Search
+    <!-- Search
 
     params参数：{{$route.params.keyword}}  -----   {{keyword}}
     <br>
-    query参数： {{$route.query.keyword2}} ---- {{keyword2}}
+    query参数： {{$route.query.keyword2}} ---- {{keyword2}} -->
+
+    <TypeNav></TypeNav>
+
   </div>
 </template>
 

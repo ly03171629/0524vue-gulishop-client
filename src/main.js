@@ -5,6 +5,14 @@ import router from '@/router'
 
 Vue.config.productionTip = false
 
+//全局注册的各种组件，因为很多地方用到
+import TypeNav from '@/components/TypeNav'
+
+Vue.component('TypeNav',TypeNav)
+
+
+
+
 // 麻烦写法
 //定义组件（本质是定义了一个组件对象的构造函数）
 // let VueComponent = Vue.extend({
