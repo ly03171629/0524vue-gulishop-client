@@ -1694,6 +1694,16 @@
 <script>
 export default {
   name: "TypeNav",
+  mounted(){
+    //挂载完成后（模板挂载完成后，模板变为真正的dom后）
+    this.getCategoryList()
+  },
+  methods:{
+    getCategoryList(){
+      //用户在触发响应的actions去发请求拿数据
+      this.$store.dispatch('getCategoryList')
+    }
+  }
 };
 </script>
 
