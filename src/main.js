@@ -5,6 +5,8 @@ import router from '@/router'
 import store from '@/store'
 
 // import '@/api'  //加载api的index.js 让其能够直接运行
+
+
 // import {reqCategoryList} from '@/api'
 // reqCategoryList()
 

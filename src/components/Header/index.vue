@@ -95,7 +95,6 @@ export default {
       // this.$router.push(location,() => {}) 
 
       // this.$router.push(location).then(() => {}) //不行，因为返回的promise不一定是成功的
-      
     }
   },
 };
