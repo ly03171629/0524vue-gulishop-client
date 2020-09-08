@@ -153,11 +153,12 @@ export default {
           name:'search',
         }
 
+
+
         //创建query参数的对象，来收集整理query参数
         let query = {
           categoryName:categoryname
         }
-
         if(category1id){
           query.category1Id = category1id
         }else if(category2id){
@@ -165,12 +166,10 @@ export default {
         }else{
           query.category3Id = category3id
         }
-
         //把query参数放到location当中 
         location.query = query
     
         this.$router.push(location)
-
       }
 
 
