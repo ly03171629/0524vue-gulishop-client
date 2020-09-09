@@ -112,6 +112,14 @@
 <script>
 export default {
   name: "ListContainer",
+  mounted(){
+    this.getBannerList()
+  },
+  methods:{
+    getBannerList(){
+      this.$store.dispatch('getBannerList')
+    }
+  }
 };
 </script>
 

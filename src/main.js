@@ -3,6 +3,7 @@ import App from '@/App'
 import Vue from 'vue'
 import router from '@/router'
 import store from '@/store'
+import '@/mock/mockServer' //运行mockServer文件，让mock可以注册上接口
 
 // import '@/api'  //加载api的index.js 让其能够直接运行
 

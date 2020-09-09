@@ -16,6 +16,16 @@ export default {
   components:{
     Header,
     Footer
+  },
+  mounted(){
+    this.getCategoryList();
+  },
+  methods:{
+    //这里面可以获取vuex当中mutations和actions方法
+    getCategoryList() {
+      //用户在触发响应的actions去发请求拿数据
+      this.$store.dispatch("getCategoryList");
+    },
   }
 }
 </script>

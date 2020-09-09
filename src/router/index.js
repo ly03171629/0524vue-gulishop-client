@@ -53,10 +53,10 @@ export default new VueRouter({
       // props:{name:'zhaoliying'}
       //2、对象写法 如果写为对象，目的是额外的往要显示的路由组件当中传递一些静态数据用的
       //3、函数写法 函数写法是用的最多的，因为它不但可以映射params还可以映射query
-      props(route){
-        //把路由对象接收到的参数，无论是什么参数，自己手动映射为路由组件的属性
-        return {keyword:route.params.keyword,keyword2:route.query.keyword2}
-      }
+      // props(route){
+      //   //把路由对象接收到的参数，无论是什么参数，自己手动映射为路由组件的属性
+      //   return {keyword:route.params.keyword,keyword2:route.query.keyword2}
+      // }
 
     },
     {

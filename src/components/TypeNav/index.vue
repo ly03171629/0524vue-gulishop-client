@@ -1,85 +1,87 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="currentIndex = -1">
+      <div @mouseleave="moveOutDiv" @mouseenter="moveInDiv">
         <h2 class="all">全部商品分类</h2>
-        <div class="sort">
-          <div class="all-sort-list2" @click="toSearch">
-            <h1>ni hao a</h1>
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList"
-              :key="c1.categoryId"
-              :class="{item_on:currentIndex === index}"
-              @mouseenter="moveIn(index)"
-            >
-              <!-- 移入哪一个一级分类 就把哪一个下标赋值给 currentIndex  那么移入的这个下标一定和currentIndex相等，其余不等-->
-              <h3>
-                <!-- <router-link :to="'/search/?categoryName='+c1.categoryName + '&category1Id=' + c1.categoryId"></router-link> -->
-                <!-- <router-link :to="`/search/?categoryName=${c1.categoryName}&category1Id=${c1.categoryId}`"></router-link> -->
-                <!-- 使用声明式导航 牵扯到使用组件标签 使用组件标签如果多了 组件对象会非常多，就会造成效率低下（内存占用厉害） -->
-                <!-- 因此我们不能使用声明式导航，采用编程式导航 -->
-                <!-- <router-link
-                  :to="{name:'search',query:{categoryName:c1.categoryName,category1Id:c1.categoryId}}"
-                >{{c1.categoryName}}</router-link>-->
+        <transition name="show">
+          <div class="sort" v-show="isShow">
+            <div class="all-sort-list2" @click="toSearch">
+              <!-- <h1>ni hao a</h1> -->
+              <div
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{item_on:currentIndex === index}"
+                @mouseenter="moveIn(index)"
+              >
+                <!-- 移入哪一个一级分类 就把哪一个下标赋值给 currentIndex  那么移入的这个下标一定和currentIndex相等，其余不等-->
+                <h3>
+                  <!-- <router-link :to="'/search/?categoryName='+c1.categoryName + '&category1Id=' + c1.categoryId"></router-link> -->
+                  <!-- <router-link :to="`/search/?categoryName=${c1.categoryName}&category1Id=${c1.categoryId}`"></router-link> -->
+                  <!-- 使用声明式导航 牵扯到使用组件标签 使用组件标签如果多了 组件对象会非常多，就会造成效率低下（内存占用厉害） -->
+                  <!-- 因此我们不能使用声明式导航，采用编程式导航 -->
+                  <!-- <router-link
+                    :to="{name:'search',query:{categoryName:c1.categoryName,category1Id:c1.categoryId}}"
+                  >{{c1.categoryName}}</router-link>-->
 
-                <!-- 采用编程式导航每个a标签都使用点击事件，又会导致，事件的回调函数太多 -->
-                <!-- <a
-                  href="javascript:;"
-                  @click="$router.push({name:'search',query:{categoryName:c1.categoryName,category1Id:c1.categoryId}})"
-                >{{c1.categoryName}}</a>-->
+                  <!-- 采用编程式导航每个a标签都使用点击事件，又会导致，事件的回调函数太多 -->
+                  <!-- <a
+                    href="javascript:;"
+                    @click="$router.push({name:'search',query:{categoryName:c1.categoryName,category1Id:c1.categoryId}})"
+                  >{{c1.categoryName}}</a>-->
 
-                <!-- 每个a标签都添加事件效率仍然低下，采用事件委派处理更妥当 -->
-                <a
-                  href="javascript:;"
-                  :data-categoryName="c1.categoryName"
-                  :data-category1Id="c1.categoryId"
-                >{{c1.categoryName}}</a>
-              </h3>
-              <div class="item-list clearfix">
-                <div class="subitem">
-                  <dl class="fore" v-for="(c2, index) in c1.categoryChild" :key="c2.categoryId">
-                    <dt>
-                      <!-- <router-link
-                        :to="{name:'search',query:{categoryName:c2.categoryName,category2Id:c2.categoryId}}"
-                      >{{c2.categoryName}}</router-link>-->
-                      <!-- <a href>{{c2.categoryName}}</a> -->
-
-                      <!-- <a
-                        href="javascript:;"
-                        @click="$router.push({name:'search',query:{categoryName:c2.categoryName,category2Id:c2.categoryId}})"
-                      >{{c2.categoryName}}</a>-->
-
-                      <a
-                        href="javascript:;"
-                        :data-categoryName="c2.categoryName"
-                        :data-category2Id="c2.categoryId"
-                      >{{c2.categoryName}}</a>
-                    </dt>
-                    <dd>
-                      <em v-for="(c3, index) in c2.categoryChild" :key="c3.categoryId">
+                  <!-- 每个a标签都添加事件效率仍然低下，采用事件委派处理更妥当 -->
+                  <a
+                    href="javascript:;"
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                  >{{c1.categoryName}}</a>
+                </h3>
+                <div class="item-list clearfix">
+                  <div class="subitem">
+                    <dl class="fore" v-for="(c2, index) in c1.categoryChild" :key="c2.categoryId">
+                      <dt>
                         <!-- <router-link
-                          :to="{name:'search',query:{categoryName:c3.categoryName,category3Id:c3.categoryId}}"
-                        >{{c3.categoryName}}</router-link>-->
+                          :to="{name:'search',query:{categoryName:c2.categoryName,category2Id:c2.categoryId}}"
+                        >{{c2.categoryName}}</router-link>-->
+                        <!-- <a href>{{c2.categoryName}}</a> -->
 
                         <!-- <a
                           href="javascript:;"
-                          @click="$router.push({name:'search',query:{categoryName:c3.categoryName,category3Id:c3.categoryId}})"
-                        >{{c3.categoryName}}</a>-->
+                          @click="$router.push({name:'search',query:{categoryName:c2.categoryName,category2Id:c2.categoryId}})"
+                        >{{c2.categoryName}}</a>-->
 
                         <a
                           href="javascript:;"
-                          :data-categoryName="c3.categoryName"
-                          :data-category3Id="c3.categoryId"
-                        >{{c3.categoryName}}</a>
-                      </em>
-                    </dd>
-                  </dl>
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                        >{{c2.categoryName}}</a>
+                      </dt>
+                      <dd>
+                        <em v-for="(c3, index) in c2.categoryChild" :key="c3.categoryId">
+                          <!-- <router-link
+                            :to="{name:'search',query:{categoryName:c3.categoryName,category3Id:c3.categoryId}}"
+                          >{{c3.categoryName}}</router-link>-->
+
+                          <!-- <a
+                            href="javascript:;"
+                            @click="$router.push({name:'search',query:{categoryName:c3.categoryName,category3Id:c3.categoryId}})"
+                          >{{c3.categoryName}}</a>-->
+
+                          <a
+                            href="javascript:;"
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                          >{{c3.categoryName}}</a>
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
 
       <nav class="nav">
@@ -105,17 +107,25 @@ export default {
   data() {
     return {
       currentIndex: -1,
+      isShow: true,
     };
   },
   mounted() {
     //挂载完成后（模板挂载完成后，模板变为真正的dom后）
-    this.getCategoryList();
+    //为了判断是在home页还是在search页，如果是search页那么我们要首先隐藏掉三级分类列表
+    if (this.$route.path !== "/home") {
+      this.isShow = false;
+    }
+
+    // this.getCategoryList();
+    //放在这里会发多次请求而请求的数据是一样的，挪到App当中发请求存数据（home/search都会发）
   },
-  methods: {//这里面可以获取vuex当中mutations和actions方法
-    getCategoryList() {
-      //用户在触发响应的actions去发请求拿数据
-      this.$store.dispatch("getCategoryList");
-    },
+  methods: {
+    // //这里面可以获取vuex当中mutations和actions方法
+    // getCategoryList() {
+    //   //用户在触发响应的actions去发请求拿数据
+    //   this.$store.dispatch("getCategoryList");
+    // },
 
     //需要节流的函数
     // moveIn(index){
@@ -137,45 +147,61 @@ export default {
       { trailing: false }
     ),
     //{ 'trailing': false } 不让函数在拖延之后执行，也就是在时间间隔内执行完这个函数，不写有可能最后的一次是拖延执行的
-    
-    toSearch(event){
-      let target = event.target  //代表目标元素  目标元素有可能是a 也有可能不是a
-      let data = target.dataset  //dataset 拿的就是元素身上以data-开头的所有的属性和值组成的一个对象 里面的属性都改为了小写
+
+    //移入到全部商品分类外部的div，显示三级分类列表
+    moveInDiv() {
+      this.isShow = true;
+    },
+    //移出全部商品分类外部的div，隐藏search的三级分类列表，home当中隐藏23级分类
+    moveOutDiv() {
+      this.currentIndex = -1; //目的隐藏23级分类
+      if (this.$route.path !== "/home") {
+        this.isShow = false; //目的是为了隐藏search的全部三级分类
+      }
+    },
+
+    toSearch(event) {
+      let target = event.target; //代表目标元素  目标元素有可能是a 也有可能不是a
+      let data = target.dataset; //dataset 拿的就是元素身上以data-开头的所有的属性和值组成的一个对象 里面的属性都改为了小写
       // console.log(data)
 
-      let {categoryname,category1id,category2id,category3id} = data
+      let { categoryname, category1id, category2id, category3id } = data;
 
-      if(categoryname){
+      if (categoryname) {
         //如果categoryname是存在的代表点的一定是a
 
         //既然点的是a 那么一定会跳转，所以我们创建跳转的对象
         let location = {
-          name:'search',
-        }
-
-
+          name: "search",
+        };
 
         //创建query参数的对象，来收集整理query参数
         let query = {
-          categoryName:categoryname
+          categoryName: categoryname,
+        };
+
+        if (category1id) {
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else {
+          query.category3Id = category3id;
         }
-        if(category1id){
-          query.category1Id = category1id
-        }else if(category2id){
-          query.category2Id = category2id
-        }else{
-          query.category3Id = category3id
+        //把query参数放到location当中
+        location.query = query;
+
+        //判断当前路由当中是不是有params参数，有就带上
+        let { params } = this.$route;
+        if (params) {
+          location.params = params;
         }
-        //把query参数放到location当中 
-        location.query = query
-    
-        this.$router.push(location)
+
+        this.$router.push(location);
       }
-
-
-    }
+    },
   },
-  computed: {//可以去拿vuex当中state及getters当中的数据
+  computed: {
+    //可以去拿vuex当中state及getters当中的数据
     //1 最原始的写法
     //假设我们目前没有使用vuex的模块化开发，categoryList存在总的store的state当中
     // categoryList(){
@@ -255,8 +281,23 @@ export default {
       width: 210px;
       height: 461px;
       position: absolute;
-      background: #fafafa;
+      // background: #fafafa;
+      background: skyblue;
       z-index: 999;
+
+      &.show-enter {
+        opacity: 0;
+        height: 0;
+      }
+
+      &.show-enter-active {
+        transition: all 0.5s;
+      }
+
+      &.show-enter-to {
+        opacity: 1;
+        height: 461px;
+      }
 
       .all-sort-list2 {
         .item {
