@@ -16,8 +16,10 @@ Vue.config.productionTip = false
 
 //全局注册的各种组件，因为很多地方用到
 import TypeNav from '@/components/TypeNav'
+import SliderLoop from '@/components/SliderLoop'
 
 Vue.component('TypeNav',TypeNav)
+Vue.component('SliderLoop',SliderLoop)
 
 
 
