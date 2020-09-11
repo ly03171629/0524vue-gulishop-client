@@ -11,18 +11,14 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">
-              iphone
-              <i>×</i>
+            <li class="with-x" v-show="searchParams.categoryName">
+              {{searchParams.categoryName}}
+              <i @click="removeCategoryName">×</i>
             </li>
-            <li class="with-x">
-              华为
-              <i>×</i>
-            </li>
-            <li class="with-x">
-              OPPO
-              <i>×</i>
+
+            <li class="with-x" v-show="searchParams.keyword">
+              {{searchParams.keyword}}
+              <i @click="removeKeyword">×</i>
             </li>
           </ul>
         </div>
@@ -76,9 +72,7 @@
                       target="_blank"
                       href="item.html"
                       title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】"
-                    >
-                    {{goods.title}}
-                    </a>
+                    >{{goods.title}}</a>
                   </div>
                   <div class="commit">
                     <i class="command">
@@ -138,7 +132,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 import SearchSelector from "./SearchSelector/SearchSelector";
 export default {
   name: "Search",
@@ -148,12 +142,12 @@ export default {
         //这个searchParams是用户初始化搜索状态数据，有可能发送请求的搜索参数全部包含
         //只不过大部分都是空的
         category1Id: "", //query参数变化的搜索参数
-        category2Id: "",//query参数变化的搜索参数
-        category3Id: "",//query参数变化的搜索参数
-        categoryName: "",//query参数变化的搜索参数
+        category2Id: "", //query参数变化的搜索参数
+        category3Id: "", //query参数变化的搜索参数
+        categoryName: "", //query参数变化的搜索参数
         keyword: "", //params参数变化的搜索参数
         props: [], //按照平台属性搜索的参数
-        trademark: "",//按照品牌搜索的参数
+        trademark: "", //按照品牌搜索的参数
 
         //代表的是用户发送请求默认的参数  默认获取第几页  默认排序规则是什么  默认每页个数
         order: "1:desc",
@@ -162,28 +156,111 @@ export default {
       },
     };
   },
+
+  //根据类别和关键字进行搜索，其实本质就是在mounted之前，把相关的参数给拿到，赋值给我们的searchParams，然后请求
+  beforeMount() {
+    //我们可以从路由中获取所需要的query参数和params参数
+    // let {
+    //   category1Id,
+    //   category2Id,
+    //   category3Id,
+    //   categoryName,
+    // } = this.$route.query;
+    // let { keyword } = this.$route.params;
+    // let searchParams = {
+    //   ...this.searchParams,
+    //   category1Id,
+    //   category2Id,
+    //   category3Id,
+    //   categoryName,
+    //   keyword,
+    // };
+    // //传递的参数如果是undefined代表没传吗，如果传递的参数是''，其实是真的有参数，但是其实没必要传递空串的参数
+    // //把参数是空串的全部过滤掉
+    // Object.keys(searchParams).forEach((item) => {
+    //   if (searchParams[item] === "") {
+    //     delete searchParams[item];
+    //   }
+    // });
+    // this.searchParams = searchParams;
+    this.handlerSearchParams()
+  },
   mounted() {
     this.getGoodsListInfo();
   },
   methods: {
     getGoodsListInfo() {
       //这次触发actions的时候需要传递搜索参数，它是一个对象
-      this.$store.dispatch("getGoodsListInfo",this.searchParams);
+      this.$store.dispatch("getGoodsListInfo", this.searchParams);
+    },
+    //请求前处理params和query参数
+    handlerSearchParams() {
+      //我们可以从路由中获取所需要的query参数和params参数
+      let {
+        category1Id,
+        category2Id,
+        category3Id,
+        categoryName,
+      } = this.$route.query;
+      let { keyword } = this.$route.params;
+
+      let searchParams = {
+        ...this.searchParams,
+        category1Id,
+        category2Id,
+        category3Id,
+        categoryName,
+        keyword,
+      };
+      //传递的参数如果是undefined代表没传吗，如果传递的参数是''，其实是真的有参数，但是其实没必要传递空串的参数
+      //把参数是空串的全部过滤掉
+      Object.keys(searchParams).forEach((item) => {
+        if (searchParams[item] === "") {
+          delete searchParams[item];
+        }
+      });
+      this.searchParams = searchParams;
+    },
+
+    //点击面包屑当中的关闭× categoryName，删除参数当中的categoryName 重新发请求
+    removeCategoryName(){
+      this.searchParams.categoryName = undefined
+      // this.getGoodsListInfo() 
+
+      //虽然可以发请求，但是路径当中的参数不会被删除，因为路由当中参数是没变化的，所以我们必须
+      //自己手动跳转路由，修改路由当中的参数
+      this.$router.push({name:'search',params:this.$route.params})
+    },
+    //点击面包屑当中的关闭× keyword 删除参数当中的keyword 重新发请求
+    removeKeyword(){
+      this.searchParams.keyword = undefined
+      // this.getGoodsListInfo()
+      this.$router.push({name:'search',query:this.$route.query})
     },
   },
   components: {
     SearchSelector,
   },
 
-  computed:{
+  computed: {
     // attrsList(){
     //   return this.$store.getters.attrsList
     // },
-    ...mapGetters(['goodsList']) //父组件search当中只需要拿到商品列表去展示
+    ...mapGetters(["goodsList"]), //父组件search当中只需要拿到商品列表去展示
     //attrsList  trademarkList 两个数据是子组件需要展示的，到子组件当中去获取，可以避免组件通信
   },
   // computed:mapGetters(['attrsList','goodsList','trademarkList'])
-  
+
+  watch: {
+    //其实在search页面重复发送请求只能通过监视当前的路由对象，自己手动调用去发请求
+    //因为mounted在路由组件当中不切换的情况下只会执行一次
+    $route: {
+      handler(newVal, oldVal) {
+        this.handlerSearchParams()
+        this.getGoodsListInfo();
+      },
+    },
+  },
 };
 </script>
 
