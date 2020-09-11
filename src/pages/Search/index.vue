@@ -20,11 +20,21 @@
               {{searchParams.keyword}}
               <i @click="removeKeyword">×</i>
             </li>
+
+            <li class="with-x" v-if="searchParams.trademark">
+              {{searchParams.trademark.split(':')[1]}}
+              <i @click="removeTrademark">×</i>
+            </li>
+
+            <li class="with-x" v-for="(prop, index) in searchParams.props" :key="index">
+              {{prop.split(':')[1]}}
+              <i @click="removeProp(index)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @searchForTrademark="searchForTrademark" @searchForProps="searchForProps"/>
 
         <!--details-->
         <div class="details clearfix">
@@ -156,7 +166,6 @@ export default {
       },
     };
   },
-
   //根据类别和关键字进行搜索，其实本质就是在mounted之前，把相关的参数给拿到，赋值给我们的searchParams，然后请求
   beforeMount() {
     //我们可以从路由中获取所需要的query参数和params参数
@@ -221,12 +230,10 @@ export default {
       });
       this.searchParams = searchParams;
     },
-
     //点击面包屑当中的关闭× categoryName，删除参数当中的categoryName 重新发请求
     removeCategoryName(){
       this.searchParams.categoryName = undefined
       // this.getGoodsListInfo() 
-
       //虽然可以发请求，但是路径当中的参数不会被删除，因为路由当中参数是没变化的，所以我们必须
       //自己手动跳转路由，修改路由当中的参数
       this.$router.push({name:'search',params:this.$route.params})
@@ -234,9 +241,41 @@ export default {
     //点击面包屑当中的关闭× keyword 删除参数当中的keyword 重新发请求
     removeKeyword(){
       this.searchParams.keyword = undefined
+      //通知header组件把输入框当中的keyword清空
+      this.$bus.$emit('clearKeyword')
       // this.getGoodsListInfo()
       this.$router.push({name:'search',query:this.$route.query})
     },
+    //子向父传递品牌数据，按照品牌搜索
+    searchForTrademark(trademark){
+      // console.log(trademark)
+      //'tmId:tmName'
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}` //根据品牌搜索一定要参考文档去看参数的结构
+      this.getGoodsListInfo()
+    },
+    //删除面包屑当中的品牌
+    removeTrademark(){
+      this.searchParams.trademark = undefined
+      this.getGoodsListInfo()
+    },
+    //子向父传递属性数据，按照属性搜索
+    searchForProps(attr,attrValue){
+      // 属性ID:属性值:属性名
+      let prop = `${attr.attrId}:${attrValue}:${attr.attrName}`
+
+      //加入之前判断数据当中是否存在，如果已经存在就不需要再次加入并且发请求了
+      let repeat = this.searchParams.props.some(item => item === prop)  
+      if(repeat) return 
+
+      this.searchParams.props.push(prop)
+      this.getGoodsListInfo()
+    },
+    //删除面包屑当中的属性
+    removeProp(index){
+      this.searchParams.props.splice(index,1)
+      this.getGoodsListInfo()
+    }
+    
   },
   components: {
     SearchSelector,

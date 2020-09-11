@@ -54,7 +54,13 @@ export default {
       keyword: "",
     };
   },
+  mounted(){
+    this.$bus.$on('clearKeyword',this.clearKeyword)
+  },
   methods: {
+    clearKeyword(){
+      this.keyword = ''
+    },
     toSearch() {
       //1、字符串写法
       //2、对象写法
