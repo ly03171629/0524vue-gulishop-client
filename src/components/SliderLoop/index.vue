@@ -30,7 +30,7 @@ export default {
           //这个回调是nextTick的回调，nextTick会等待页面dom最近一次循环更新结束之后才会执行它内部传递的回调
           //updated也可以实现，但是并不是最近一次更新，而是所有的更新都会执行这个钩子（updated）
           new Swiper(this.$refs.bannerSwiper, {
-            loop: true, // 循环模式选项
+            // loop: true, // 循环模式选项
             // 如果需要分页器
             pagination: {
               el: ".swiper-pagination",
