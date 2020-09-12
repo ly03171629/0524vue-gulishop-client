@@ -48,13 +48,13 @@
                   图标用什么  iconfont
                   图标显示的时候是向上还是向下根据数据的排序类型决定
                 -->
-                <li :class="{active:searchParams.order.split(':')[0] === '1'}">
+                <li :class="{active:sortFlag === '1'}">
                   <a href="javascript:;" @click="sortGoods('1')">
                     综合
                     <i
-                      v-if="searchParams.order.split(':')[0] === '1'"
-                      class="iconfont" 
-                      :class="{iconup:searchParams.order.split(':')[1]==='asc',icondown:searchParams.order.split(':')[1]==='desc'}"
+                      v-if="sortFlag === '1'"
+                      class="iconfont"
+                      :class="{iconup:sortType==='asc',icondown:sortType==='desc'}"
                     ></i>
                   </a>
                 </li>
@@ -67,13 +67,13 @@
                 <li>
                   <a href="#">评价</a>
                 </li>
-                <li :class="{active:searchParams.order.split(':')[0] === '2'}">
+                <li :class="{active:sortFlag === '2'}">
                   <a a href="javascript:;" @click="sortGoods('2')">
                     价格
                     <i
-                      v-if="searchParams.order.split(':')[0] === '2'"
-                      class="iconfont" 
-                      :class="{iconup:searchParams.order.split(':')[1]==='asc',icondown:searchParams.order.split(':')[1]==='desc'}"
+                      v-if="sortFlag === '2'"
+                      class="iconfont"
+                      :class="{iconup:sortType==='asc',icondown:sortType==='desc'}"
                     ></i>
                   </a>
                 </li>
@@ -85,9 +85,12 @@
               <li class="yui3-u-1-5" v-for="(goods,index) in goodsList" :key="goods.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank">
+                    <!-- <a href="item.html" target="_blank">
                       <img :src="goods.defaultImg" />
-                    </a>
+                    </a> -->
+                    <router-link :to="'/detail/'+goods.id" >
+                      <img :src="goods.defaultImg" />
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -96,11 +99,14 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a
+                    <!-- <a
                       target="_blank"
                       href="item.html"
                       title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】"
-                    >{{goods.title}}</a>
+                    >{{goods.title}}</a> -->
+                    <router-link :to="'/detail/'+goods.id" >
+                      {{goods.title}}
+                    </router-link>
                   </div>
                   <div class="commit">
                     <i class="command">
@@ -120,39 +126,14 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted">
-                  <span>...</span>
-                </li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div>
-                <span>共10页&nbsp;</span>
-              </div>
-            </div>
-          </div>
+          <!-- 父组件需要给分页子组件传递的四个数据 -->
+          <Pagination
+            :currentPageNum="searchParams.pageNo"
+            :pageSize="searchParams.pageSize"
+            :total="goodsListInfo.total"
+            :continueNum="5"
+            @changePageNum="changePageNum"
+          ></Pagination>
         </div>
       </div>
     </div>
@@ -160,7 +141,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import SearchSelector from "./SearchSelector/SearchSelector";
 export default {
   name: "Search",
@@ -183,7 +164,7 @@ export default {
         //排序类型 desc和asc   desc代表降序   asc升序
 
         pageNo: 1,
-        pageSize: 2,
+        pageSize: 1,
       },
     };
   },
@@ -253,6 +234,7 @@ export default {
     },
     //点击面包屑当中的关闭× categoryName，删除参数当中的categoryName 重新发请求
     removeCategoryName() {
+      this.searchParams.pageNo = 1
       this.searchParams.categoryName = undefined;
       // this.getGoodsListInfo()
       //虽然可以发请求，但是路径当中的参数不会被删除，因为路由当中参数是没变化的，所以我们必须
@@ -261,6 +243,7 @@ export default {
     },
     //点击面包屑当中的关闭× keyword 删除参数当中的keyword 重新发请求
     removeKeyword() {
+      this.searchParams.pageNo = 1
       this.searchParams.keyword = undefined;
       //通知header组件把输入框当中的keyword清空
       this.$bus.$emit("clearKeyword");
@@ -271,11 +254,13 @@ export default {
     searchForTrademark(trademark) {
       // console.log(trademark)
       //'tmId:tmName'
+      this.searchParams.pageNo = 1
       this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`; //根据品牌搜索一定要参考文档去看参数的结构
       this.getGoodsListInfo();
     },
     //删除面包屑当中的品牌
     removeTrademark() {
+      this.searchParams.pageNo = 1
       this.searchParams.trademark = undefined;
       this.getGoodsListInfo();
     },
@@ -283,35 +268,45 @@ export default {
     searchForProps(attr, attrValue) {
       // 属性ID:属性值:属性名
       let prop = `${attr.attrId}:${attrValue}:${attr.attrName}`;
-
+      
       //加入之前判断数据当中是否存在，如果已经存在就不需要再次加入并且发请求了
       let repeat = this.searchParams.props.some((item) => item === prop);
       if (repeat) return;
 
+      this.searchParams.pageNo = 1
       this.searchParams.props.push(prop);
       this.getGoodsListInfo();
     },
     //删除面包屑当中的属性
     removeProp(index) {
+      this.searchParams.pageNo = 1
       this.searchParams.props.splice(index, 1);
       this.getGoodsListInfo();
     },
     //点击综合和价格进行排序
-    sortGoods(sortFlag){
+    sortGoods(sortFlag) {
       //拿到原本数据当中的排序标志和排序类型
-      let originSortFlag = this.searchParams.order.split(':')[0]
-      let originSortType = this.searchParams.order.split(':')[1]
-      let newOrder = ''
-      if(sortFlag === originSortFlag){
+      let originSortFlag = this.sortFlag;
+      let originSortType = this.sortType;
+      let newOrder = "";
+      if (sortFlag === originSortFlag) {
         //点击的还是原来的那个排序
-        newOrder = `${originSortFlag}:${originSortType === 'asc'? 'desc' : 'asc'}`
-      }else{
+        newOrder = `${originSortFlag}:${
+          originSortType === "asc" ? "desc" : "asc"
+        }`;
+      } else {
         //点击的是新的那个排序
-        newOrder = `${sortFlag}:desc`
+        newOrder = `${sortFlag}:desc`;
       }
 
       //把新的排序规则更新然后重新发请求
-      this.searchParams.order = newOrder
+      this.searchParams.pageNo = 1
+      this.searchParams.order = newOrder;
+      this.getGoodsListInfo();
+    },
+
+    changePageNum(page){
+      this.searchParams.pageNo = page
       this.getGoodsListInfo()
     }
   },
@@ -323,8 +318,17 @@ export default {
     // attrsList(){
     //   return this.$store.getters.attrsList
     // },
+    ...mapState({
+      goodsListInfo: (state) => state.search.goodsListInfo,
+    }),
     ...mapGetters(["goodsList"]), //父组件search当中只需要拿到商品列表去展示
     //attrsList  trademarkList 两个数据是子组件需要展示的，到子组件当中去获取，可以避免组件通信
+    sortFlag() {
+      return this.searchParams.order.split(":")[0];
+    },
+    sortType() {
+      return this.searchParams.order.split(":")[1];
+    },
   },
   // computed:mapGetters(['attrsList','goodsList','trademarkList'])
 
