@@ -101,7 +101,13 @@ export default {
         location.query = query
       }
 
-      this.$router.push(location)
+      //判断当前路由路径是什么，如果是home，那么我们就push，如果不是home那就replace
+      if(this.$route.path !== '/home'){
+        this.$router.replace(location)
+      }else{
+        this.$router.push(location)
+      }
+      
       // this.$router.push(location).catch(() => {})
       // this.$router.push(location).then(() => {}).catch(() => {})
       // this.$router.push(location,() => {}) 
