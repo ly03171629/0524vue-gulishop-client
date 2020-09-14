@@ -63,4 +63,12 @@ export const reqGoodsListInfo = (searchParams) => {
 // reqGoodsListInfo({})   
 
 
+//请求获取商品详情数据
+///api/item/{ skuId }    get
 
+export const reqGoodsDetailInfo = (skuId) => {
+  return Ajax({
+    url:`/item/${ skuId }`,
+    method:'get'
+  })
+}

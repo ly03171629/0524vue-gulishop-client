@@ -7,6 +7,7 @@ Vue.use(Vuex)
 import home from './home'
 import user from './user'
 import search from './search'
+import detail from './detail'
 
 
 //存数据的地方，多个属性的对象
@@ -35,7 +36,8 @@ export default new Vuex.Store({
   modules:{
     home,
     user,
-    search
+    search,
+    detail
   }
 })
 

@@ -1,9 +1,9 @@
 <template>
   <div class="spec-preview">
-    <img src="../images/s1.png" />
+    <img :src="defaultImg.imgUrl" />
     <div class="event"></div>
     <div class="big">
-      <img src="../images/s1.png" />
+      <img :src="defaultImg.imgUrl" />
     </div>
     <div class="mask"></div>
   </div>
@@ -12,6 +12,25 @@
 <script>
   export default {
     name: "Zoom",
+    props:['skuImageList'],
+    data(){
+      return {
+        defaultIndex:0
+      }
+    },
+    mounted(){
+      this.$bus.$on('changeDefaultIndex',this.changeDefaultIndex) //给事件总线绑定改变下标的事件
+    },
+    computed: {
+      defaultImg(){
+        return this.skuImageList[this.defaultIndex] || {}
+      }
+    },
+    methods:{
+      changeDefaultIndex(index){
+        this.defaultIndex = index //改变了下标，defaultIndex被改变，默认显示的图片就会改变
+      }
+    }
   }
 </script>
 
