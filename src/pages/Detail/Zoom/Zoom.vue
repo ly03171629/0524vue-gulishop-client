@@ -1,11 +1,11 @@
 <template>
   <div class="spec-preview">
     <img :src="defaultImg.imgUrl" />
-    <div class="event"></div>
+    <div class="event" @mousemove="move"></div>
     <div class="big">
-      <img :src="defaultImg.imgUrl" />
+      <img :src="defaultImg.imgUrl" ref="bigImg"/>
     </div>
-    <div class="mask"></div>
+    <div class="mask" ref="mask"></div>
   </div>
 </template>
 
@@ -29,7 +29,38 @@
     methods:{
       changeDefaultIndex(index){
         this.defaultIndex = index //改变了下标，defaultIndex被改变，默认显示的图片就会改变
-      }
+      },
+
+      move(event){
+        let mask = this.$refs.mask
+        let bigImg = this.$refs.bigImg
+
+
+        let mouseX = event.offsetX
+        let mouseY = event.offsetY
+        let maskX = mouseX - mask.offsetWidth / 2
+        let maskY = mouseY- mask.offsetHeight / 2
+
+        if(maskX < 0){
+          maskX = 0
+        }else if(maskX > mask.offsetWidth){
+          maskX = mask.offsetWidth
+        }
+
+        if(maskY < 0){
+          maskY = 0
+        }else if(maskY > mask.offsetHeight){
+          maskY = mask.offsetHeight
+        }
+
+        //设置遮罩的位置
+        mask.style.left = maskX + 'px'
+        mask.style.top = maskY + 'px'
+
+        //设置大图的位置
+        bigImg.style.left = -2 *maskX + 'px'
+        bigImg.style.top = -2 *maskY + 'px'
+      } 
     }
   }
 </script>

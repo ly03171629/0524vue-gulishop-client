@@ -8,6 +8,7 @@ import home from './home'
 import user from './user'
 import search from './search'
 import detail from './detail'
+import shopcart from './shopcart'
 
 
 //存数据的地方，多个属性的对象
@@ -37,7 +38,8 @@ export default new Vuex.Store({
     home,
     user,
     search,
-    detail
+    detail,
+    shopcart
   }
 })
 

@@ -16,9 +16,9 @@
         <!-- 左侧放大镜区域 -->
         <div class="previewWrap">
           <!--放大镜效果-->
-          <Zoom :skuImageList="skuImageList"/>
+          <Zoom :skuImageList="skuImageList" />
           <!-- 小图列表 -->
-          <ImageList :skuImageList="skuImageList"/>
+          <ImageList :skuImageList="skuImageList" />
         </div>
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
@@ -78,12 +78,17 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt" />
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input
+                  autocomplete="off"
+                  class="itxt"
+                  v-model="skuNum"
+                  @change="$event.target.value*1 > 1?skuNum=$event.target.value*1:skuNum=1"
+                />
+                <a href="javascript:" class="plus" @click="skuNum++">+</a>
+                <a href="javascript:" class="mins" @click="skuNum > 1? skuNum-- : skuNum = 1">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:;" @click="addShopCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -328,6 +333,11 @@ import Zoom from "./Zoom/Zoom";
 
 export default {
   name: "Detail",
+  data() {
+    return {
+      skuNum: 1,
+    };
+  },
   mounted() {
     this.getGoodsDetailInfo();
   },
@@ -335,17 +345,59 @@ export default {
     getGoodsDetailInfo() {
       this.$store.dispatch("getGoodsDetailInfo", this.$route.params.goodsId);
     },
-    changeIsChecked(spuSaleAttrValue,spuSaleAttrValueList){
+    changeIsChecked(spuSaleAttrValue, spuSaleAttrValueList) {
       //排它
-      spuSaleAttrValueList.forEach(item => item.isChecked = '0')
-      spuSaleAttrValue.isChecked = '1'
-    }
+      spuSaleAttrValueList.forEach((item) => (item.isChecked = "0"));
+      spuSaleAttrValue.isChecked = "1";
+    },
+    async addShopCart() {
+      //1、发请求
+      try {
+        //2、根据请求成功干啥
+        const result = await this.$store.dispatch("addOrUpdateShopCart", {
+          skuId: this.skuInfo.id,
+          skuNum: this.skuNum,
+        });
+
+        alert('添加购物车成功，确认自动跳转至添加购物车成功页面')
+
+        //localStorage 和 sessionStorage
+        //都是前端浏览器的存储方案，本质都是小型的文件数据库,存储数据都是字符串形式
+        //区别：localStorage永久存储 不管浏览器是关闭还是刷新都存在
+        //     sessionStorage 不是永久存储，关闭浏览器再打开就没了
+
+        //怎么做
+        // localStorage.setItem('键',值)   设置和修改
+        // localStorage.getItem('键')      读取
+        // localStorage.removeItem('键')   删除某一个
+        // localStorage.clear()            删除所有
+
+
+        //在跳转之前需要给添加成功页面带过去两个数据  
+        //一个是skuNum，简单数据可以路由直接传递
+        //还有一个是商品的详情信息，它比较复杂，路由传参不方便，那么我们可以考虑存储方案
+
+        //sessionStorage存数据的时候，都会默认的调用数据的toString方法
+        //[obejct  Obejct]    
+        //[1,2,3].toString === '1,2,3'
+        //(function fmn() {}).tostring() ==== 'function fmn() {}'
+
+        sessionStorage.setItem('SKUINFO_KEY',JSON.stringify(this.skuInfo))
+        //传递参数要看下一个页面用到了没有，用到了就要想办法传过去
+        this.$router.push('/addcartsuccess?skuNum='+this.skuNum)
+
+      } catch (error) {
+        alert('添加购物车失败' + error.message)
+      }
+
+      //3、请求失败干啥
+    },
   },
   computed: {
     ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList"]),
-    skuImageList(){
-      return this.skuInfo.skuImageList || []
-    }
+    skuImageList() {
+      return this.skuInfo.skuImageList || [];
+    },
   },
   components: {
     ImageList,
