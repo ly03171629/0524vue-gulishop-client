@@ -1,4 +1,4 @@
-import {reqAddOrUpdateShopCart,reqShopCartList} from '@/api'
+import {reqAddOrUpdateShopCart,reqDeleteCart,reqShopCartList, reqUpdateCartIsChecked} from '@/api'
 //存数据的地方，多个属性的对象
 const state = {
   shopCartList:[]
@@ -36,7 +36,53 @@ const actions = {
     if(result.code === 200){
       commit('RECEIVESHOPCARTLIST',result.data)
     }
+  },
+  async updateCartIsChecked({commit},{skuId,isChecked}){
+    const result = await reqUpdateCartIsChecked(skuId,isChecked)
+    if(result.code === 200){
+      return 'ok'
+    }else{
+      return Promise.reject(new Error('faild'))
+    }
+  },
+  updateAllCartIsChecked({state,dispatch},isChecked){
+    let promises = []
+    state.shopCartList.forEach(item => {
+      if(item.isChecked === isChecked) return 
+      const promise = dispatch('updateCartIsChecked',{skuId:item.skuId,isChecked:isChecked})
+      promises.push(promise)
+    })
+    return Promise.all(promises)
+  },
+
+  async deleteCart({commit},skuId){
+    const result = await reqDeleteCart(skuId)
+    if(result.code === 200){
+      return 'ok'
+    }else{
+      return Promise.reject(new Error('faild'))
+    }
+  },
+
+  deleteAllCart({state,dispatch}){
+    let promises = []
+    state.shopCartList.forEach(item => {
+      if(!item.isChecked) return
+      const promise = dispatch('deleteCart',item.skuId)
+      promises.push(promise)
+    })
+
+    /*
+    Promise.all是一个方法
+    参数：     要求是一个promise对象的数组，这个数组里面必须都是promise对象
+    返回值：   返回是一个promise，
+              promise状态成功 结果就是promise数组当中每个promise成功的结果组成的数组
+              promise失败  结果就是promise数组当中第一个失败的promise的失败原因
+    功能：     让多个promise一起执行，真正执行的时候有顺序的（数组内的先后），但是这几个promise谁先结束不清楚
+    */
+    return Promise.all(promises)
   }
+
 }
 
 //通过state计算出来的属性数据（只有读没有写，只能使用state数据不能修改state数据）

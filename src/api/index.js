@@ -92,3 +92,21 @@ export const reqShopCartList = () => {
     method:'get'
   })
 }
+
+
+//请求修改购物车的选中状态  /api/cart/checkCart/{skuId}/{isChecked}   GET
+
+export const reqUpdateCartIsChecked = (skuId,isChecked) => {
+  return Ajax({
+    url:`/cart/checkCart/${skuId}/${isChecked}`,
+    method:'get'
+  })
+}
+
+//请求删除购物车  /api/cart/deleteCart/{skuId}  delete
+export const reqDeleteCart = (skuId) => {
+  return Ajax({
+    url:`/cart/deleteCart/${skuId}`,
+    method:'delete'
+  })
+}
