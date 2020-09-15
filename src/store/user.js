@@ -1,6 +1,9 @@
+import {getUserTempId} from '@/utils/userabout'
 //存数据的地方，多个属性的对象
 const state = {
-  
+  userTempId:getUserTempId() 
+  //在state当中存储userTempId是为了效率更高一些，因为从localstorage获取比从state直接拿要慢
+  //我们只是在项目初始化的时候从localstorage获取一次，然后村给state，以后要用从state直接拿
 }
 //直接修改数据的地，是多个方法的一个对象  方法当中不能出现if  for   异步操作
 const mutations = {}

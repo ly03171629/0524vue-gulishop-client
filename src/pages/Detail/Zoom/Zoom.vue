@@ -35,7 +35,6 @@
         let mask = this.$refs.mask
         let bigImg = this.$refs.bigImg
 
-
         let mouseX = event.offsetX
         let mouseY = event.offsetY
         let maskX = mouseX - mask.offsetWidth / 2
