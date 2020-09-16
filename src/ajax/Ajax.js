@@ -23,6 +23,15 @@ instance.interceptors.request.use(config => {
   if(userTempId){
     config.headers.userTempId = userTempId
   }
+
+  //登录成功后需要把token带着，从今往后每个请求都会带过去两个标识，一个是临时的一个是登录后的
+  //带过去两个目的是为了后端能够把之前临时标识对应的数据合并到登录后标识对应的数据
+  
+  let token = store.state.user.userInfo.token
+  if(token){
+    config.headers.token = token
+  }
+
   return config;
 });
 
