@@ -83,6 +83,9 @@ export default {
     getShopCartList() {
       this.$store.dispatch("getShopCartList");
     },
+
+
+
     // ...mapActions(['getShopCartList'])
     //修改购物车商品数量
     async changeCartNum(cart,disNum){
@@ -92,6 +95,7 @@ export default {
       if(disNum + cart.skuNum < 1){
         disNum = 1 - cart.skuNum   //最后的商品数量最少得是1个
       }
+      
       try {
         await this.$store.dispatch('addOrUpdateShopCart',{skuId:cart.skuId,skuNum:disNum})
         this.getShopCartList()

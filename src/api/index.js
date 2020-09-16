@@ -15,7 +15,6 @@ export const reqCategoryList = () => {
     method:'get'
   })
 }
-
 // reqCategoryList()
 
 //请求获取mock的banner和floor数据
@@ -108,5 +107,35 @@ export const reqDeleteCart = (skuId) => {
   return Ajax({
     url:`/cart/deleteCart/${skuId}`,
     method:'delete'
+  })
+}
+
+
+//请求注册用户  /api/user/passport/register  post  
+
+export const reqUserRegister = (userInfo) => {
+  return Ajax({
+    url:'/user/passport/register',
+    method:'post',
+    data:userInfo
+  })
+}
+
+//请求登录用户  /api/user/passport/login  post 
+
+export const reqUserLogin = (userInfo) => {
+  return Ajax({
+    url:'/user/passport/login',
+    method:'post',
+    data:userInfo
+  })
+}
+
+//请求退出登录 /api/user/passport/logout get
+
+export const reqUserLogout = () => {
+  return Ajax({
+    url:'/user/passport/logout',
+    method:'get',
   })
 }

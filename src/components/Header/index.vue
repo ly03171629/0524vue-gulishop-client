@@ -5,7 +5,13 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+
+          <p v-if="$store.state.user.userInfo.name">
+            <a href="javascript:;">{{$store.state.user.userInfo.name}}</a>
+            <a href="javascript:;" class="register" @click="logout">退出登录</a>
+          </p>
+
+          <p v-else>
             <span>请</span>
             <!-- <router-link to="/login">登录</router-link> -->
             <router-link :to="{path:'/login'}">登录</router-link>
@@ -58,6 +64,16 @@ export default {
     this.$bus.$on('clearKeyword',this.clearKeyword)
   },
   methods: {
+    async logout(){
+      try {
+        await this.$store.dispatch('userLogout')
+        alert('退出登录成功')
+        this.$router.push('/')
+      } catch (error) {
+        alert('退出登录失败'+error.message)
+      }
+      
+    },
     clearKeyword(){
       this.keyword = ''
     },

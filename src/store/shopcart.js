@@ -37,6 +37,8 @@ const actions = {
       commit('RECEIVESHOPCARTLIST',result.data)
     }
   },
+
+  
   async updateCartIsChecked({commit},{skuId,isChecked}){
     const result = await reqUpdateCartIsChecked(skuId,isChecked)
     if(result.code === 200){
