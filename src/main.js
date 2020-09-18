@@ -25,11 +25,12 @@ import "swiper/css/swiper.min.css";
 // Vue.use(Tag)
 
 //引入messageBox
-import {MessageBox,Message} from 'element-ui'
+import {MessageBox,Message,Pagination} from 'element-ui'
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$message = Message;  //用来提示错误信息，更漂亮
 
+Vue.use(Pagination)
 
 
 
@@ -40,11 +41,11 @@ Vue.config.productionTip = false
 //全局注册的各种组件，因为很多地方用到
 import TypeNav from '@/components/TypeNav'
 import SliderLoop from '@/components/SliderLoop'
-import Pagination from '@/components/Pagination'
+// import Pagination from '@/components/Pagination'
 
 Vue.component('TypeNav',TypeNav)
 Vue.component('SliderLoop',SliderLoop)
-Vue.component('Pagination',Pagination)
+// Vue.component('Pagination',Pagination)
 
 
 

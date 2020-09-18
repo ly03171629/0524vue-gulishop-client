@@ -131,6 +131,7 @@ export default {
   data() {
     return {
       orderInfo: {},
+      orderStatus: 0,
     };
   },
   mounted() {
@@ -148,22 +149,71 @@ export default {
     async pay() {
       // With promises
       try {
-         //1、生成二维码图片的url
+        //1、生成二维码图片的url
         let imgUrl = await QRCode.toDataURL(this.orderInfo.codeUrl);
 
         //2、弹出消息盒子展示二维码
-        this.$alert(
-          `<img src="${imgUrl}">`,
-          "请使用微信扫码支付",
-          {
-            dangerouslyUseHTMLString: true,
-            showCancelButton: true,
-            cancelButtonText: "支付遇到问题",
-            confirmButtonText: "我已成功支付",
-            showClose: false,
-            center: true,
+        this.$alert(`<img src="${imgUrl}">`, "请使用微信扫码支付", {
+          dangerouslyUseHTMLString: true,
+          showCancelButton: true,
+          cancelButtonText: "支付遇到问题",
+          confirmButtonText: "我已成功支付",
+          showClose: false,
+          center: true,
+          //5、
+          beforeClose:(action, instance, done) => {
+            //箭头函数this才是外部的this 组件对象，否则就是messageBox实例对象
+            if(action === 'confirm'){
+              //点击了确认按钮
+              // if(this.orderStatus !== 200){
+              //   this.$message.info('请确保支付成功')
+              // }
+
+
+              //下面的代码是给大家的后门
+              clearInterval(this.timer); //清除管理模块当中的定时器异步任务
+              this.timer = null;
+              done()
+              this.$router.push("/paysuccess");
+
+            }else if(action === 'cancel'){
+              //点击了取消按钮
+              this.$message.success('请联系尚硅谷前台小姐姐')
+              clearInterval(this.timer)
+              this.timer = null
+              done()
+            }
           }
-        );
+        })
+        //4、
+        //then内部传递的回调处理的是点击确认按钮的逻辑
+        //catch内部传递的回调处理的是点击取消按钮的逻辑
+        //这两个逻辑无论点击哪个按钮，最终都会强制的关闭我们的messageBox
+          .then(() => {})
+          .catch(() => {}); //加上它就不会报  (in promise)这个错误
+
+        //3、发请求连续发送去查询状态码
+        if (!this.timer) {
+          //保证同时一个订单只开启一个定时器
+          this.timer = setInterval(async () => {
+            //4、发请求拿状态码
+            //5、如果状态码成功自动跳转到支付成功
+            const result = await this.$API.reqOrderStatus(
+              this.orderInfo.orderId
+            );
+            if (result.code === 200) {
+              //把状态码保存一下后续点击按钮判断
+              this.orderStatus = 200;
+              //清除循环定时器
+              clearInterval(this.timer); //清除管理模块当中的定时器异步任务
+              this.timer = null;
+              //关闭messageBox
+              this.$msgbox.close(); //关闭当前的消息盒子
+              //跳转到支付成功页面
+              this.$router.push("/paysuccess");
+            }
+          }, 2000);
+        }
       } catch (error) {
         this.$message.error("生成微信二维码失败");
       }
