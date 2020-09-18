@@ -139,6 +139,8 @@ export default {
     ...mapState({
       tradeInfo: (state) => state.trade.tradeInfo,
     }),
+
+    
     defaultAddress() {
       return this.userAddressList.find((item) => item.isDefault === "1") || {}
     },

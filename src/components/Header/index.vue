@@ -5,6 +5,10 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
+          
+          <!-- <el-button type="danger" icon="el-icon-plus"></el-button>
+          <el-tag type="success">嘿嘿</el-tag> -->
+
 
           <p v-if="$store.state.user.userInfo.name">
             <a href="javascript:;">{{$store.state.user.userInfo.name}}</a>
@@ -73,7 +77,6 @@ export default {
       } catch (error) {
         alert('退出登录失败'+error.message)
       }
-      
     },
     clearKeyword(){
       this.keyword = ''

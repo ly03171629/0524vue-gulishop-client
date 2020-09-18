@@ -7,7 +7,7 @@ const state = {
 const mutations = {
   RECEIVETRADEINFO(state,tradeInfo){
     state.tradeInfo = tradeInfo
-  }
+  },
 }
 
 

@@ -6,10 +6,32 @@ import store from '@/store'
 import '@/mock/mockServer' //运行mockServer文件，让mock可以注册上接口
 import "swiper/css/swiper.min.css";
 // import '@/api'  //加载api的index.js 让其能够直接运行
-
-
 // import {reqCategoryList} from '@/api'
 // reqCategoryList()
+
+
+//element-ui的整体引入方式
+// import ElementUI from 'element-ui';
+// import 'element-ui/lib/theme-chalk/index.css';
+// Vue.use(ElementUI)
+
+
+//element-ui的按需引入方式
+//1、下载babel的插件
+//2、在babel.config.js当中配置插件
+//3、引入需要使用的组件并注册
+// import {Button,Tag} from 'element-ui'
+// Vue.use(Button)
+// Vue.use(Tag)
+
+//引入messageBox
+import {MessageBox,Message} from 'element-ui'
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
+Vue.prototype.$message = Message;  //用来提示错误信息，更漂亮
+
+
+
 
 import * as API from '@/api'
 
@@ -62,7 +84,7 @@ Vue.component('Pagination',Pagination)
 new Vue({
   beforeCreate() {
     Vue.prototype.$bus = this//vm  
-    Vue.prototype.$API = API//vm  
+    Vue.prototype.$API = API//
     //在Vue的原型上添加了一个属性  $bus   $bus指向了一个对象 这个对象就是我们vm对象
     //1、为什么要在Vue原型上添加   
     //（让所有的组件对象都能看到它，找到它）

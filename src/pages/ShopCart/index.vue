@@ -91,7 +91,10 @@ export default {
     //修改购物车商品数量
     async changeCartNum(cart,disNum){
       //判断如果本来就是1  要改变的数量还小于0  那么不需要发请求  结果还是1
-      if(cart.skuNum === 1 && disNum < 0) return
+      if(cart.skuNum === 1 && disNum < 0){
+        
+        return 
+      }
 
       if(disNum + cart.skuNum < 1){
         disNum = 1 - cart.skuNum   //最后的商品数量最少得是1个
