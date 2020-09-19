@@ -89,7 +89,7 @@
                       <img :src="goods.defaultImg" />
                     </a> -->
                     <router-link :to="'/detail/'+goods.id" >
-                      <img :src="goods.defaultImg" />
+                      <img v-lazy="goods.defaultImg" />
                     </router-link>
                   </div>
                   <div class="price">
@@ -201,6 +201,8 @@ export default {
   },
   methods: {
     getGoodsListInfo() {
+      // import XXX from '/asddas'同步引入
+      // import() 动态引入
       //这次触发actions的时候需要传递搜索参数，它是一个对象
       this.$store.dispatch("getGoodsListInfo", this.searchParams);
     },

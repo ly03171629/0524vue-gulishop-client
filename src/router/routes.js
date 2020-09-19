@@ -1,5 +1,10 @@
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
+// import Home from '@/pages/Home'
+// import Search from '@/pages/Search'
+
+
+const Home = () => import('@/pages/Home')   //使用的时候单独打包文件加载
+const Search = () => import('@/pages/Search')   //使用的时候单独打包文件加载
+
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Detail from '@/pages/Detail'
@@ -11,6 +16,9 @@ import PaySuccess from '@/pages/PaySuccess'
 import Center from '@/pages/Center'
 import MyOrder from '@/pages/Center/MyOrder'
 import GroupOrder from '@/pages/Center/GroupOrder'
+
+
+import store from '@/store'
 
 export default [
   {
@@ -34,23 +42,56 @@ export default [
   },
   {
     path:'/trade',
-    component:Trade
+    component:Trade,
+    beforeEnter: (to, from, next) => {
+      if(from.path === '/shopcart'){
+        next()
+      }else{
+        next('/')
+      }
+    }
   },
   {
     path:'/pay',
-    component:Pay
+    component:Pay,
+    beforeEnter: (to, from, next) => {
+      if(from.path === '/trade'){
+        next()
+      }else{
+        next('/')
+      }
+    }
   },
   {
     path:'/paysuccess',
-    component:PaySuccess
+    component:PaySuccess,
+    beforeEnter: (to, from, next) => {
+      if(from.path === '/pay'){
+        next()
+      }else{
+        next('/')
+      }
+    }
   },
   {
     path:'/shopcart',
     component:ShopCart
   },
+
+  
   {
     path:'/addcartsuccess',
-    component:AddCartSuccess
+    component:AddCartSuccess,
+    //只有携带了skuNum和sessionStorage内部有skuInfo数据  才能看到添加购物车成功的界面
+    beforeEnter: (to, from, next) => {
+      let skuNum = to.query.skuNum
+      let skuInfo = sessionStorage.getItem('SKUINFO_KEY')
+      if(skuNum && skuInfo){
+        next()
+      }else{
+        next(false)
+      }
+    }
   },
   {
     path:'/detail/:goodsId',
@@ -58,7 +99,7 @@ export default [
   },
   {
     path:'/home',
-    component:Home
+    component:Home   //Home是一个函数，当你要使用component对应的组件的时候，它会调用对应的Home函数
   },
   {
     path:'/search/:keyword?',//?代表这个params参数可传可不传
@@ -81,7 +122,14 @@ export default [
     component:Login,
     meta:{
       isHide:true
-    }
+    },
+    // beforeEnter: (to, from, next) => {
+    //   if(store.state.user.userInfo.name){
+    //     next('/')
+    //   }else{
+    //     next()
+    //   }
+    // }
   },
   {
     path:'/register',

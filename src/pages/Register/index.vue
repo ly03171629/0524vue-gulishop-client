@@ -2,20 +2,45 @@
   <div class="register-container">
     <!-- 注册内容 -->
     <div class="register">
-      <h3>注册新用户
-        <span class="go">我有账号，去 
+      <h3>
+        注册新用户
+        <span class="go">
+          我有账号，去
           <router-link to="/login">登陆</router-link>
           <!-- <a href="login.html" target="_blank">登陆</a> -->
         </span>
       </h3>
       <div class="content">
         <label>手机号:</label>
-        <input type="text" placeholder="请输入你的手机号" v-model="mobile">
-        <span class="error-msg">错误提示信息</span>
+
+        <input
+          v-model="mobile"
+          placeholder="请输入你的手机号"
+          type="text"
+          name="phone"
+          v-validate="{required: true,regex: /^1\d{10}$/}"
+          :class="{invalid: errors.has('phone')}"
+        />
+
+        <span class="error-msg">{{ errors.first('phone') }}</span>
+
+        <!-- <input type="text" placeholder="请输入你的手机号" v-model="mobile" />
+        <span class="error-msg">错误提示信息</span>-->
       </div>
       <div class="content">
         <label>验证码:</label>
-        <input type="text" placeholder="请输入验证码" v-model="code">
+        <input
+          v-model="code"
+          placeholder="请输入验证码"
+          type="text"
+          name="code"
+          v-validate="{required: true,regex: /^\d{4}$/}"
+          :class="{invalid: errors.has('code')}"
+        />
+        <img ref="code" src="/api/user/passport/code" alt="code" @click="changeCode" />
+        <span class="error-msg">{{ errors.first('code') }}</span>
+
+        <!-- <input type="text" placeholder="请输入验证码" v-model="code" /> -->
 
         <!-- 
           下面两种获取验证码的方式都是可以返回正常数据的
@@ -28,24 +53,50 @@
         -->
         <!-- <img ref="code" src="http://182.92.128.115/api/user/passport/code" alt="code"> -->
 
-        <img ref="code" src="/api/user/passport/code" alt="code" @click="changeCode">
+        <!-- <img ref="code" src="/api/user/passport/code" alt="code" @click="changeCode" />
 
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">错误提示信息</span>-->
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码" v-model="password">
-        <span class="error-msg">错误提示信息</span>
+
+        <input
+          v-model="password"
+          placeholder="请输入你的密码"
+          type="text"
+          name="password"
+          v-validate="{required: true,regex: /^\w{6,10}$/}"
+          :class="{invalid: errors.has('password')}"
+        />
+        <span class="error-msg">{{ errors.first('password') }}</span>
+        <!-- <input type="text" placeholder="请输入你的登录密码" v-model="password" />
+        <span class="error-msg">错误提示信息</span>-->
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码" v-model="password2">
-        <span class="error-msg">错误提示信息</span>
+
+        <input
+          v-model="password2"
+          placeholder="请再次输入密码"
+          type="text"
+          name="password2"
+          v-validate="{required: true,regex: /^\w{6,10}$/,is:(password)}"
+          :class="{invalid: errors.has('password2')}"
+        />
+        <span class="error-msg">{{ errors.first('password2') }}</span>
+        <!-- <input type="text" placeholder="请输入你的登录密码" v-model="password" />
+        <span class="error-msg">错误提示信息</span>-->
       </div>
       <div class="controls">
-        <input name="m1" type="checkbox">
+        <input
+          name="isCheck"
+          type="checkbox"
+          v-model="isCheck"
+          v-validate="{agree:true}"
+          :class="{invalid: errors.has('isCheck')}"
+        />
         <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first('isCheck') }}</span>
       </div>
       <div class="btn">
         <button @click="register">完成注册</button>
@@ -65,155 +116,161 @@
         <li>尚品汇社区</li>
       </ul>
       <div class="address">地址：北京市昌平区宏福科技园综合楼6层</div>
-      <div class="beian">京ICP备19006430号
-      </div>
+      <div class="beian">京ICP备19006430号</div>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'Register',
-    data(){
-      return {
-        mobile:'',
-        password:'',
-        password2:'',
-        code:''
-      }
+export default {
+  name: "Register",
+  data() {
+    return {
+      mobile: "",
+      password: "",
+      password2: "",
+      code: "",
+      isCheck: false,
+    };
+  },
+  methods: {
+    changeCode() {
+      this.$refs.code.src = "/api/user/passport/code";
     },
-    methods:{
-      changeCode(){
-        this.$refs.code.src = '/api/user/passport/code'
-      },
-      async register(){
-        let {mobile,password,password2,code} = this
-        if(mobile && password && password2 && code && password === password2){
-          try {
-            await this.$store.dispatch('userRegister',{mobile,password,code})
-            alert('恭喜注册成功，确认跳转到登录页')
-            this.$router.push('/login')
-          } catch (error) {
-            alert('用户注册失败'+error.message)
-          }
+    async register() {
+      const success = await this.$validator.validateAll(); // 对所有表单项进行验证
+      if (success) {
+        //success为true代表验证通过
+        let { mobile, password, password2, code } = this;
+        try {
+          await this.$store.dispatch("userRegister", {
+            mobile,
+            password,
+            code,
+          });
+          alert("恭喜注册成功，确认跳转到登录页");
+          this.$router.push("/login");
+        } catch (error) {
+          alert("用户注册失败" + error.message);
         }
       }
-    }
-  }
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
-  .register-container {
-    .register {
-      width: 1200px;
-      height: 445px;
-      border: 1px solid rgb(223, 223, 223);
-      margin: 0 auto;
+.register-container {
+  .register {
+    width: 1200px;
+    height: 445px;
+    border: 1px solid rgb(223, 223, 223);
+    margin: 0 auto;
 
-      h3 {
-        background: #ececec;
-        margin: 0;
-        padding: 6px 15px;
-        color: #333;
-        border-bottom: 1px solid #dfdfdf;
-        font-size: 20.04px;
-        line-height: 30.06px;
+    h3 {
+      background: #ececec;
+      margin: 0;
+      padding: 6px 15px;
+      color: #333;
+      border-bottom: 1px solid #dfdfdf;
+      font-size: 20.04px;
+      line-height: 30.06px;
 
-        span {
-          font-size: 14px;
-          float: right;
+      span {
+        font-size: 14px;
+        float: right;
 
-          a {
-            color: #e1251b;
-          }
-        }
-      }
-
-      div:nth-of-type(1) {
-        margin-top: 40px;
-      }
-
-      .content {
-        padding-left: 390px;
-        margin-bottom: 18px;
-        position: relative;
-
-        label {
-          font-size: 14px;
-          width: 96px;
-          text-align: right;
-          display: inline-block;
-        }
-
-        input {
-          width: 270px;
-          height: 38px;
-          padding-left: 8px;
-          box-sizing: border-box;
-          margin-left: 5px;
-          outline: none;
-          border: 1px solid #999;
-        }
-
-        img {
-          vertical-align: sub;
-        }
-
-        .error-msg {
-          position: absolute;
-          top: 100%;
-          left: 495px;
-          color: red;
-        }
-      }
-
-      .controls {
-        text-align: center;
-        position: relative;
-
-        input {
-          vertical-align: middle;
-        }
-
-        .error-msg {
-          position: absolute;
-          top: 100%;
-          left: 495px;
-          color: red;
-        }
-      }
-
-      .btn {
-        text-align: center;
-        line-height: 36px;
-        margin: 17px 0 0 55px;
-
-        button {
-          outline: none;
-          width: 270px;
-          height: 36px;
-          background: #e1251b;
-          color: #fff !important;
-          display: inline-block;
-          font-size: 16px;
+        a {
+          color: #e1251b;
         }
       }
     }
 
-    .copyright {
-      width: 1200px;
-      margin: 0 auto;
-      text-align: center;
-      line-height: 24px;
+    div:nth-of-type(1) {
+      margin-top: 40px;
+    }
 
-      ul {
-        li {
-          display: inline-block;
-          border-right: 1px solid #e4e4e4;
-          padding: 0 20px;
-          margin: 15px 0;
-        }
+    .content {
+      padding-left: 390px;
+      margin-bottom: 18px;
+      position: relative;
+
+      label {
+        font-size: 14px;
+        width: 96px;
+        text-align: right;
+        display: inline-block;
+      }
+
+      input {
+        width: 270px;
+        height: 38px;
+        padding-left: 8px;
+        box-sizing: border-box;
+        margin-left: 5px;
+        outline: none;
+        border: 1px solid #999;
+      }
+
+      img {
+        vertical-align: sub;
+      }
+
+      .error-msg {
+        position: absolute;
+        top: 100%;
+        left: 495px;
+        color: red;
+      }
+    }
+
+    .controls {
+      text-align: center;
+      position: relative;
+
+      input {
+        vertical-align: middle;
+      }
+
+      .error-msg {
+        position: absolute;
+        top: 100%;
+        left: 495px;
+        color: red;
+      }
+    }
+
+    .btn {
+      text-align: center;
+      line-height: 36px;
+      margin: 17px 0 0 55px;
+
+      button {
+        outline: none;
+        width: 270px;
+        height: 36px;
+        background: #e1251b;
+        color: #fff !important;
+        display: inline-block;
+        font-size: 16px;
       }
     }
   }
+
+  .copyright {
+    width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 24px;
+
+    ul {
+      li {
+        display: inline-block;
+        border-right: 1px solid #e4e4e4;
+        padding: 0 20px;
+        margin: 15px 0;
+      }
+    }
+  }
+}
 </style>
