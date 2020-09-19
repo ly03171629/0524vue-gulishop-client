@@ -55,11 +55,11 @@ Vue.config.productionTip = false
 //全局注册的各种组件，因为很多地方用到
 import TypeNav from '@/components/TypeNav'
 import SliderLoop from '@/components/SliderLoop'
-// import Pagination from '@/components/Pagination'
+import MyPagination from '@/components/MyPagination'
 
 Vue.component('TypeNav',TypeNav)
 Vue.component('SliderLoop',SliderLoop)
-// Vue.component('Pagination',Pagination)
+Vue.component('MyPagination',MyPagination)
 
 
 

@@ -127,13 +127,13 @@
             </ul>
           </div>
           <!-- 父组件需要给分页子组件传递的四个数据 -->
-          <Pagination
+          <MyPagination
             :currentPageNum="searchParams.pageNo"
             :pageSize="searchParams.pageSize"
             :total="goodsListInfo.total"
             :continueNum="5"
             @changePageNum="changePageNum"
-          ></Pagination>
+          ></MyPagination>
         </div>
       </div>
     </div>

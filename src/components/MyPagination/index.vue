@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: "Pagination",
+  name: "MyPagination",
   // props:['currentPageNum']   数组写法最简单，但是缺点没法指定数据类型
   // props:{                    对象的简便写法 它可以指定数据类型，严格了一些，但是还是不够严格
   //   currentPageNum:Number
