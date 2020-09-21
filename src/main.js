@@ -39,12 +39,13 @@ Vue.use(VueLazyload, { // 内部自定义了一个指令lazy
 // Vue.use(Tag)
 
 //引入messageBox
-import {MessageBox,Message,Pagination} from 'element-ui'
+import {MessageBox,Message,Pagination,Button} from 'element-ui'
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$message = Message;  //用来提示错误信息，更漂亮
 
 Vue.use(Pagination)
+Vue.use(Button)
 
 
 
